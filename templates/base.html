@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% if title %}
+         <title>SBCM: {{ title }}</title>
+    {% else %}
+        <title>Sutton Bingham Course Manager</title>
+    {% endif %}
+
+    <!-- bootstap -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+</head>
+<body>
+    <!-- Nav Bar -->
+    <nav class="navbar navbar-dark bg-primary justify-content-center">
+        <a class="navbar-brand" href="">Sutton Bingham Course Manager</a>
+    </nav>
+
+    <!-- Main Content -->
+    {% block content %}
+    {% endblock %}
+</body>
+
+<!-- Scripts -->
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+{% block script %}
+{% endblock %}
+</html>
