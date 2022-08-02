@@ -1,4 +1,4 @@
-"""manager URL Configuration
+"""SuttonBinghamCourseManager URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.0/topics/http/urls/
@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
 
-from . import views
+from manager import views
 
 urlpatterns = [
     path('', RedirectView.as_view(pattern_name='home', permanent=True)),
