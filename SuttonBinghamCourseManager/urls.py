@@ -18,10 +18,27 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 
 from manager import views
+from manager.views import DingyInstructorCreateView, DingyInstructorDeleteView, \
+    DingyInstructorUpdateView, AssistantInstructorUpdateView, \
+    AssistantInstructorDeleteView, AssistantInstructorCreateView, \
+    HelperCreateView, HelperDeleteView, HelperUpdateView
 
 urlpatterns = [
     path('', RedirectView.as_view(pattern_name='home', permanent=True)),
     path('admin/', admin.site.urls),
     path("accounts/", include("django.contrib.auth.urls")),
-    path('home/', views.home, name="home")
+    path('home/', views.home, name="home"),
+
+
+    path('dingy-instructor/add', DingyInstructorCreateView.as_view(), name="DI-add"),
+    path('dingy-instructor/delete/<int:pk>', DingyInstructorDeleteView.as_view(), name="DI-delete"),
+    path('dingy-instructor/update/<int:pk>', DingyInstructorUpdateView.as_view(), name="DI-update"),
+
+    path('assistant-instructor/add', AssistantInstructorCreateView.as_view(), name="AI-add"),
+    path('assistant-instructor/delete/<int:pk>', AssistantInstructorDeleteView.as_view(), name="AI-delete"),
+    path('assistant-instructor/update/<int:pk>', AssistantInstructorUpdateView.as_view(), name="AI-update"),
+
+    path('helper/add', HelperCreateView.as_view(), name="helper-add"),
+    path('helper/delete/<int:pk>', HelperDeleteView.as_view(), name="helper-delete"),
+    path('helper/update/<int:pk>', HelperUpdateView.as_view(), name="helper-update"),
 ]

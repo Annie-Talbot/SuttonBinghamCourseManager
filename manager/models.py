@@ -18,3 +18,19 @@ class DingyInstructor(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class AssistantInstructor(models.Model):
+    name = models.CharField(max_length=127, unique=True)
+    experience = models.IntegerField(choices=Experience.levels, default=0)
+
+    def __str__(self):
+        return self.name
+
+
+class Helper(models.Model):
+    name = models.CharField(max_length=127, unique=True)
+    experience = models.IntegerField(choices=Experience.levels, default=0)
+
+    def __str__(self):
+        return self.name

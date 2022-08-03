@@ -2,5 +2,115 @@
 {% load static %}
 
 {% block content %}
-    <h1>HOME</h1>
+    <div class="card-columns m-3 d-flex justify-content-center align-items-top">
+
+        {# INSTRUCTOR CARD #}
+        <div class="card m-1 border-primary" style="width: 300px;display:inline-block;max-height:450px; overflow-y: auto;">
+
+            <div class="card-header sticky-top d-flex justify-content-between align-items-center mb-3 bg-light">
+                <h5 class="card-title">DIs: </h5>
+                <a class="btn btn-info btn-sm" href="{% url 'DI-add' %}">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </div>
+            <div class="card-body">
+                {% for instructor in instructors %}
+                    <div class="card m-1" style="width: 16rem;">
+                        <h5 class="card-header d-flex justify-content-between align-items-center">
+                            {{ instructor.name }}
+                            <div class="d-flex justify-content-end align-items-center">
+                                {# Edit button #}
+                                <a class="btn btn-warning btn-sm m-1" href="{% url 'DI-update' pk=instructor.id %}">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                {# Delete button #}
+                                <form id="DI-delete-form-{{ instructor.id }}" method="post" action="{% url 'DI-delete' pk=instructor.id %}">
+                                    {% csrf_token %}
+                                </form>
+                                <a class="btn btn-danger btn-sm m-1" onclick="document.getElementById('DI-delete-form-{{ instructor.id }}').submit();">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </div>
+                        </h5>
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Experience Level: {{ instructor.experience }}</h6>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    {# ASSISTANT CARD #}
+        <div class="card m-1 border-primary" style="width: 300px;display:inline-block;max-height:450px; overflow-y: auto;">
+            <div class="card-header sticky-top d-flex justify-content-between align-items-center mb-3 bg-light">
+                <h5 class="card-title">AIs: </h5>
+                <a class="btn btn-info btn-sm" href="{% url 'AI-add' %}">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </div>
+            <div class="card-body">
+                {% for assistant in assistants %}
+                    <div class="card m-1" style="width: 16rem;">
+                        <h5 class="card-header d-flex justify-content-between align-items-center">
+                            {{ assistant.name }}
+                            <div class="d-flex justify-content-end align-items-center">
+                                {# Edit button #}
+                                <a class="btn btn-warning btn-sm m-1" href="{% url 'AI-update' pk=assistant.id %}">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                {# Delete button #}
+                                <form id="AI-delete-form-{{ assistant.id }}" method="post" action="{% url 'AI-delete' pk=assistant.id %}">
+                                    {% csrf_token %}
+                                </form>
+                                <a class="btn btn-danger btn-sm m-1" onclick="document.getElementById('AI-delete-form-{{ assistant.id }}').submit();">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </div>
+                        </h5>
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Experience Level: {{ assistant.experience }}</h6>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    {# HELPER CARD #}
+        <div class="card m-1 border-primary" style="width: 300px;display:inline-block;max-height:450px; overflow-y: auto;">
+            <div class="card-header sticky-top d-flex justify-content-between align-items-center mb-3 bg-light">
+                <h5 class="card-title">Helpers: </h5>
+                <a class="btn btn-info btn-sm" href="{% url 'helper-add' %}">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </div>
+            <div class="card-body">
+                {% for helper in helpers %}
+                    <div class="card m-1" style="width: 16rem;">
+                        <h5 class="card-header d-flex justify-content-between align-items-center">
+                            {{ helper.name }}
+                            <div class="d-flex justify-content-end align-items-center">
+                                {# Edit button #}
+                                <a class="btn btn-warning btn-sm m-1" href="{% url 'helper-update' pk=helper.id %}">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                {# Delete button #}
+                                <form id="helper-delete-form-{{ helper.id }}" method="post" action="{% url 'helper-delete' pk=helper.id %}">
+                                    {% csrf_token %}
+                                </form>
+                                <a class="btn btn-danger btn-sm m-1" onclick="document.getElementById('helper-delete-form-{{ helper.id }}').submit();">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </div>
+                        </h5>
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Experience Level: {{ helper.experience }}</h6>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
