@@ -1,7 +1,7 @@
 from django import forms
 
 from manager.models import Experience, DingyInstructor, AssistantInstructor, \
-    Helper, Course, DingyInstructorAvailability
+    Helper, Course, DingyInstructorAvailability, Stage
 
 
 class DingyInstructorForm(forms.ModelForm):
@@ -34,3 +34,9 @@ class DingyInstructorAvailabilityForm(forms.ModelForm):
     class Meta:
         model = DingyInstructorAvailability
         fields = "__all__"
+
+
+class StageFrom(forms.ModelForm):
+    class Meta:
+        model = Stage
+        fields =  "__all__"

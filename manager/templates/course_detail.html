@@ -44,6 +44,59 @@
                         </div>
                     </div>
                 </div>
+                <div class="row" style="width: 100%;">
+                    <div class="card" style="width: 100%;">
+                        <div class="card-header d-flex align-items-center">
+                            <div class="col-md-10">
+                                <h3>Stages:</h3>
+                            </div>
+                            <div class="col-md-2 float-right">
+                                <a type="button" class="btn btn-secondary float-right" href="{% url 'stage-create' course_id=course.id %}">Add Stage</a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-columns m-3 bg_primary justify-content-center align-items-top">
+                                {% for stage in stages %}
+                                    <div class="card">
+                                        <div class="card-header d-flex align-items-center">
+                                            <div class="col-md-10">
+                                                <h3>{{ stage.name }}</h3>
+                                                <h6>No Kids: {{ stage.no_kids }}</h6>
+                                            </div>
+                                            <div class="col-md-2 float-right">
+                                                {# Edit button #}
+                                                <a class="btn btn-warning btn-sm m-1" href="{% url 'stage-update' course_id=course.id pk=stage.id %}">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                                {# Delete Button #}
+                                                <form id="stage-delete-form-{{ stage.id }}" method="post" action="{% url 'stage-delete' pk=stage.id course_id=course.id%}">
+                                                    {% csrf_token %}
+                                                </form>
+                                                <a class="btn btn-danger btn-sm m-1" onclick="document.getElementById('stage-delete-form-{{ stage.id }}').submit();">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <table>
+                                                <tr>
+                                                    <th>Instructors:</th>
+                                                    <th></th>
+                                                </tr>
+                                                {% for instructor in stage.dingyinstructoravailability_set.all %}
+                                                    <tr>
+                                                        <td>{{ instructor.instructor.name }}</td>
+                                                        <td>Delete</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </table>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

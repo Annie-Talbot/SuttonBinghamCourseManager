@@ -7,7 +7,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from manager.forms import DingyInstructorForm, AssistantInstructorForm, \
     HelperForm, CourseForm
 from manager.models import DingyInstructor, AssistantInstructor, Helper, \
-    Course, DingyInstructorAvailability
+    Course, DingyInstructorAvailability, Stage
 
 
 def home(request):
@@ -174,15 +174,57 @@ def course_detail_view(request, pk):
         return redirect('login')
 
     course = Course.objects.get(id=pk)
+    stages = Stage.objects.filter(course=course.id)
     template = loader.get_template("course_detail.html")
     context = {
         'title': "View Course",
         'DI_availability': DingyInstructorAvailability.objects.filter(
             course=pk, assigned=False),
         'course': course,
+        'stages': stages
     }
     return HttpResponse(template.render(context, request))
 
+
+class StageCreateView(CreateView):
+    model = Stage
+    fields = "__all__"
+    template_name = "stage_create_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(StageCreateView, self).get_context_data(**kwargs)
+        context['course_id'] = self.kwargs['course_id']
+        return context
+
+    def get_success_url(self):
+        return reverse("course-detail", args=[self.kwargs['course_id']])
+
+
+class StageUpdateView(CreateView):
+    model = Stage
+    fields = "__all__"
+    template_name = "stage_create_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(StageUpdateView, self).get_context_data(**kwargs)
+        context['course_id'] = self.kwargs['course_id']
+        return context
+
+    def get_success_url(self):
+        return reverse("course-detail", args=[self.kwargs['course_id']])
+
+
+class StageDeleteView(DeleteView):
+    model = Stage
+    pk_url_kwarg = 'pk'
+
+    def get_context_data(self, **kwargs):
+        context = super(StageDeleteView, self).get_context_data(**kwargs)
+        context['course_id'] = self.kwargs['course_id']
+        return context
+
+    def get_success_url(self):
+        return reverse("course-detail", args=[self.kwargs['course_id']])
 
 def page_not_found_view(request, exception):
     return render(request, '404.html', status=404)
