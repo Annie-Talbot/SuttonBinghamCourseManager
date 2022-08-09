@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <div class="card" style="width: 100%;">
+            <div class="card-header d-flex align-items-center">
+                <div class="col-md-10">
+                    <h3>{{ course.name }}</h3>
+                    <h6>Start Date: {{ course.start_date }}</h6>
+                </div>
+                <div class="col-md-2 float-right">
+                    {# Edit button #}
+                    <a class="btn btn-warning btn-sm m-1" href="{% url 'course-update' pk=course.id %}">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row" style="width: 100%;">
+                    <div class="card m-3 border-primary" style="width: 33.33%;">
+                        <div class="card-header sticky-top d-flex justify-content-between align-items-center mb-3 bg-light">
+                            <h5 class="card-title">Instructors: </h5>
+                            <a class="btn btn-info btn-sm" href="{% url 'course-availability-add-DIs' pk=course.id%}">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <table>
+                                {% for DI in DI_availability %}
+                                    <tr>
+                                        <td>{{ DI.instructor.name }}</td>
+                                        <td>
+                                            <form id="available-DI-delete-form-{{ DI.id }}" method="post" action="{% url 'course-availability-remove-DI' pk=DI.id course_id=course.id%}">
+                                                {% csrf_token %}
+                                            </form>
+                                            <a class="btn btn-danger btn-sm m-1" onclick="document.getElementById('available-DI-delete-form-{{ DI.id }}').submit();">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,7 +1,7 @@
 from django import forms
 
 from manager.models import Experience, DingyInstructor, AssistantInstructor, \
-    Helper
+    Helper, Course, DingyInstructorAvailability
 
 
 class DingyInstructorForm(forms.ModelForm):
@@ -20,3 +20,17 @@ class HelperForm(forms.ModelForm):
     class Meta:
         model = Helper
         fields = '__all__'
+
+
+class CourseForm(forms.ModelForm):
+    class Meta:
+        model = Course
+        fields = "__all__"
+
+    start_date = forms.DateField()
+
+
+class DingyInstructorAvailabilityForm(forms.ModelForm):
+    class Meta:
+        model = DingyInstructorAvailability
+        fields = "__all__"

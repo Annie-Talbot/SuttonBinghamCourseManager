@@ -21,7 +21,8 @@ from manager import views
 from manager.views import DingyInstructorCreateView, DingyInstructorDeleteView, \
     DingyInstructorUpdateView, AssistantInstructorUpdateView, \
     AssistantInstructorDeleteView, AssistantInstructorCreateView, \
-    HelperCreateView, HelperDeleteView, HelperUpdateView
+    HelperCreateView, HelperDeleteView, HelperUpdateView, CourseCreateView, \
+    CourseDeleteView, CourseUpdateView, DIDeleteView
 
 urlpatterns = [
     path('', RedirectView.as_view(pattern_name='home', permanent=True)),
@@ -41,4 +42,17 @@ urlpatterns = [
     path('helper/add', HelperCreateView.as_view(), name="helper-add"),
     path('helper/delete/<int:pk>', HelperDeleteView.as_view(), name="helper-delete"),
     path('helper/update/<int:pk>', HelperUpdateView.as_view(), name="helper-update"),
+
+
+    path('course/add', CourseCreateView.as_view(), name="course-add"),
+    path('course/<int:pk>/update', CourseUpdateView.as_view(), name="course-update"),
+    path('course/<int:pk>/delete', CourseDeleteView.as_view(), name="course-delete"),
+    path('course/<int:pk>/view', views.course_detail_view, name="course-detail"),
+
+    path('course/<int:pk>/availability/add-DIs', views.course_add_DIs, name="course-availability-add-DIs"),
+    path('course/<int:course_id>/availability/remove-DI/<int:pk>',
+         DIDeleteView.as_view(),
+         name="course-availability-remove-DI"),
 ]
+
+handler404 = "manager.views.page_not_found_view"

@@ -34,3 +34,29 @@ class Helper(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Course(models.Model):
+    name = models.CharField(max_length=127, unique=True)
+    start_date = models.DateField()
+
+    def __str__(self):
+        return self.name
+
+
+class DingyInstructorAvailability(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.deletion.CASCADE,
+                               null=False)
+    instructor = models.ForeignKey(DingyInstructor,
+                                   on_delete=models.deletion.CASCADE,
+                                   null=False)
+    assigned = models.BooleanField()
+
+    def __str__(self):
+        return self.course.name + " - " + self.instructor.name
+
+
+class Stage(models.Model):
+    name = models.CharField(max_length=127, unique=False)
+    no_kids = models.IntegerField()
+    DIs = models.ManyToOneRel
