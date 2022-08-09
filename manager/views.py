@@ -117,7 +117,7 @@ class CourseUpdateView(UpdateView):
         return reverse("course-availability-add-DIs", args=[self.object.id])
 
 
-def course_add_DIs(request, pk):
+def course_availability_add_DIs(request, pk):
     if not request.user.is_authenticated:
         return redirect('login')
     else:
@@ -161,7 +161,7 @@ def course_add_DIs(request, pk):
                                                 args=[course.id]))
 
 
-class DIDeleteView(DeleteView):
+class DIAvailabilityDeleteView(DeleteView):
     model = DingyInstructorAvailability
     pk_url_kwarg = 'pk'
 

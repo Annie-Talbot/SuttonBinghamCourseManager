@@ -22,7 +22,7 @@ from manager.views import DingyInstructorCreateView, DingyInstructorDeleteView, 
     DingyInstructorUpdateView, AssistantInstructorUpdateView, \
     AssistantInstructorDeleteView, AssistantInstructorCreateView, \
     HelperCreateView, HelperDeleteView, HelperUpdateView, CourseCreateView, \
-    CourseDeleteView, CourseUpdateView, DIDeleteView
+    CourseDeleteView, CourseUpdateView, DIAvailabilityDeleteView
 
 urlpatterns = [
     path('', RedirectView.as_view(pattern_name='home', permanent=True)),
@@ -49,9 +49,11 @@ urlpatterns = [
     path('course/<int:pk>/delete', CourseDeleteView.as_view(), name="course-delete"),
     path('course/<int:pk>/view', views.course_detail_view, name="course-detail"),
 
-    path('course/<int:pk>/availability/add-DIs', views.course_add_DIs, name="course-availability-add-DIs"),
+    path('course/<int:pk>/availability/add-DIs',
+         views.course_availability_add_DIs,
+         name="course-availability-add-DIs"),
     path('course/<int:course_id>/availability/remove-DI/<int:pk>',
-         DIDeleteView.as_view(),
+         DIAvailabilityDeleteView.as_view(),
          name="course-availability-remove-DI"),
 ]
 
