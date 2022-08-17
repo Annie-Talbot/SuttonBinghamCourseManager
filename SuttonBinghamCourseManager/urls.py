@@ -60,6 +60,8 @@ urlpatterns = [
          CourseDeleteView.as_view(), name="course-delete"),
     path('course/<int:pk>/view',
          views.course_detail_view, name="course-detail"),
+    path('course/<int:pk>/export',
+         views.course_export_view, name="course-export"),
 
     path('course/<int:pk>/availability/DIs/add',
          views.course_availability_add_DIs,
@@ -70,10 +72,17 @@ urlpatterns = [
 
     path('course/<int:course_id>/stage/add',
          StageCreateView.as_view(), name='stage-create'),
-    path('course/<int:course_id>/stage/update/<int:pk>',
+    path('course/<int:course_id>/stage/<int:pk>/update',
          StageUpdateView.as_view(), name='stage-update'),
-    path('course/<int:course_id>/stage/delete/<int:pk>',
+    path('course/<int:course_id>/stage/<int:pk>/delete',
          StageDeleteView.as_view(), name='stage-delete'),
+    path('course/<int:course_id>/stage/<int:stage_id>/DIs/add',
+         views.stage_add_DIs,
+         name='stage-add-DIs'),
+    path('course/<int:course_id>/stage/<int:stage_id>/DIs/<int:pk>/return',
+         views.stage_return_DI,
+         name='stage-return-DI'),
+
 ]
 
 handler404 = "manager.views.page_not_found_view"

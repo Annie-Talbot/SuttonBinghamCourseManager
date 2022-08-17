@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import DateInput
 
 from manager.models import Experience, DingyInstructor, AssistantInstructor, \
     Helper, Course, DingyInstructorAvailability, Stage
@@ -26,8 +27,9 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         fields = "__all__"
-
-    start_date = forms.DateField()
+        widgets = {
+            'start_date': DateInput(attrs={'type': 'date'}),
+        }
 
 
 class DingyInstructorAvailabilityForm(forms.ModelForm):

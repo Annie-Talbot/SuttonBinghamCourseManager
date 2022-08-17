@@ -2,9 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>$Title$</title>
+    <title>Course Export</title>
 </head>
-<body>
-$END$
+<body style="font-family: Calibri">
+    <h1 style="text-align: center; margin-bottom: 2px">{{ course.name }}</h1>
+    <h4 style="text-align: center; margin-top: 2px;">{{ course.start_date }}</h4>
+    {% for stage in course.stage_set.all %}
+        <h2 style="margin: 2px;">{{ stage.name }} - w/ {{ stage.no_kids }} Kids</h2>
+        <div style="margin-left: 20px;">
+            <h3 style="margin: 2px;">Instructors: </h3>
+            <ul style="margin-top: 2px">
+                {% for DI in stage.dingyinstructoravailability_set.all %}
+                    <li>{{ DI.instructor.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
 </body>
 </html>

@@ -98,7 +98,7 @@ class CourseCreateView(CreateView):
     template_name = "course_create_form.html"
 
     def get_success_url(self):
-        return reverse("course-add-DIs", args=[self.object.id])
+        return reverse("course-availability-add-DIs", args=[self.object.id])
 
 
 class CourseDeleteView(DeleteView):
@@ -116,6 +116,16 @@ class CourseUpdateView(UpdateView):
     def get_success_url(self):
         return reverse("course-availability-add-DIs", args=[self.object.id])
 
+
+def course_export_view(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    template = loader.get_template("course_export.html")
+    context = {
+        'title': "Add DIs",
+        'course': Course.objects.get(id=pk),
+    }
+    return HttpResponse(template.render(context, request))
 
 def course_availability_add_DIs(request, pk):
     if not request.user.is_authenticated:
@@ -144,7 +154,8 @@ def course_availability_add_DIs(request, pk):
             raw_instructors = request.POST.getlist('instructors[]')
             course = Course.objects.filter(id=pk)[0]
             for instructor_id in raw_instructors:
-                instructor = DingyInstructor.objects.filter(id=instructor_id)[0]
+                instructor = DingyInstructor.objects.filter(id=instructor_id)[
+                    0]
                 # ensure this combination doesnt already exist!
                 exiting_comb = DingyInstructorAvailability.objects \
                     .filter(course=course,
@@ -225,6 +236,54 @@ class StageDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse("course-detail", args=[self.kwargs['course_id']])
+
+    def form_valid(self, form, **kwargs):
+        id = self.kwargs.get('pk')
+        stage = Stage.objects.get(id=id)
+        stage.dingyinstructoravailability_set.update(assigned=False, stage=None)
+        return super().form_valid(form)
+
+
+def stage_add_DIs(request, course_id, stage_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    else:
+        if request.method == "GET":
+            course = Course.objects.get(id=course_id)
+            available_DIs = DingyInstructorAvailability.objects \
+                .exclude(assigned=True) \
+                .filter(course=course)
+
+            template = loader.get_template("stage_add_DIs.html")
+            context = {
+                'title': "Add DIs",
+                'DIs': available_DIs,
+                'course': course,
+            }
+            return HttpResponse(template.render(context, request))
+        else:
+            raw_instructors = request.POST.getlist('instructors[]')
+            course = Course.objects.get(id=course_id)
+            for instructor_id in raw_instructors:
+                instructor = DingyInstructor.objects.get(id=instructor_id)
+                # ensure this combination doesnt already exist!
+                DingyInstructorAvailability.objects \
+                    .filter(course=course,
+                            instructor=instructor) \
+                    .update(assigned=True, stage=stage_id)
+
+            return HttpResponseRedirect(reverse('course-detail',
+                                                args=[course.id]))
+
+
+def stage_return_DI(request, course_id, stage_id, pk):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    else:
+        DingyInstructorAvailability.objects.filter(id=pk).update(assigned=False,
+                                                           stage=None)
+        return HttpResponseRedirect(reverse("course-detail", args=[course_id]))
+
 
 def page_not_found_view(request, exception):
     return render(request, '404.html', status=404)

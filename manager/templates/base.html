@@ -12,14 +12,20 @@
 
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://kit.fontawesome.com/5243ed0bdc.js" crossorigin="anonymous"></script>
     {% block styling %}
     {% endblock %}
 </head>
 <body>
     <!-- Nav Bar -->
-    <nav class="navbar navbar-dark bg-primary justify-content-center shadow">
-        <a class="navbar-brand" href="">Sutton Bingham Course Manager</a>
+    <nav class="navbar navbar-dark bg-primary justify-content-around shadow">
+        <img href="{% url 'home' %}" src="../../static/assets/SBSC-logo.png" alt="SBSC Logo" height="70px">
+        <a class="navbar-brand" href="{% url 'home' %}">Sutton Bingham Course Manager</a>
+        {% if request.user.is_authenticated %}
+            <a class="btn btn-secondary" href="{% url 'logout' %}">Log out</a>
+        {% else %}
+            <div></div>
+        {% endif %}
     </nav>
 
     <!-- Main Content -->
