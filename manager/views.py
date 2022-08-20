@@ -127,7 +127,8 @@ def course_export_view(request, pk):
     }
     return HttpResponse(template.render(context, request))
 
-def course_availability_add_DIs(request, pk):
+
+def availability_add_view(request, pk, staff_type, staff_availability):
     if not request.user.is_authenticated:
         return redirect('login')
     else:
@@ -135,41 +136,45 @@ def course_availability_add_DIs(request, pk):
             course = Course.objects.filter(id=pk)
             if not len(course) == 1:
                 raise FileNotFoundError
-            DIs = DingyInstructor.objects.all()
-            print(list(DIs))
-            availabilities = DingyInstructorAvailability.objects.filter(
+            staffs = staff_type.objects.all()
+            availabilities = staff_availability.objects.filter(
                 course=pk)
             for availability in availabilities:
                 print(availability.instructor.id)
-                DIs = DIs.exclude(id=availability.instructor.id)
+                staffs = staffs.exclude(id=availability.instructor.id)
 
             template = loader.get_template("course_add_DIs.html")
             context = {
                 'title': "Add DIs",
-                'DIs': DIs,
+                'DIs': staffs,
                 'course': course[0],
             }
             return HttpResponse(template.render(context, request))
         else:
-            raw_instructors = request.POST.getlist('instructors[]')
+            raw_staff = request.POST.getlist('instructors[]')
             course = Course.objects.filter(id=pk)[0]
-            for instructor_id in raw_instructors:
-                instructor = DingyInstructor.objects.filter(id=instructor_id)[
+            for staff_id in raw_staff:
+                staff = staff_type.objects.filter(id=staff_id)[
                     0]
                 # ensure this combination doesnt already exist!
-                exiting_comb = DingyInstructorAvailability.objects \
+                exiting_comb = staff_availability.objects \
                     .filter(course=course,
-                            instructor=instructor)
+                            instructor=staff)
                 if len(exiting_comb) != 0:
                     continue
 
                 # Add this availability record
-                DingyInstructorAvailability.objects \
+                staff_availability.objects \
                     .create(course=course,
-                            instructor=instructor,
+                            instructor=staff,
                             assigned=False)
             return HttpResponseRedirect(reverse('course-detail',
                                                 args=[course.id]))
+
+
+def course_availability_add_DIs(request, pk):
+    return availability_add_view(request, pk, DingyInstructor,
+                                 DingyInstructorAvailability)
 
 
 class DIAvailabilityDeleteView(DeleteView):
@@ -240,7 +245,8 @@ class StageDeleteView(DeleteView):
     def form_valid(self, form, **kwargs):
         id = self.kwargs.get('pk')
         stage = Stage.objects.get(id=id)
-        stage.dingyinstructoravailability_set.update(assigned=False, stage=None)
+        stage.dingyinstructoravailability_set.update(assigned=False,
+                                                     stage=None)
         return super().form_valid(form)
 
 
@@ -280,8 +286,9 @@ def stage_return_DI(request, course_id, stage_id, pk):
     if not request.user.is_authenticated:
         return redirect('login')
     else:
-        DingyInstructorAvailability.objects.filter(id=pk).update(assigned=False,
-                                                           stage=None)
+        DingyInstructorAvailability.objects.filter(id=pk).update(
+            assigned=False,
+            stage=None)
         return HttpResponseRedirect(reverse("course-detail", args=[course_id]))
 
 

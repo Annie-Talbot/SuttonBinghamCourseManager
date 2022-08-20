@@ -63,5 +63,17 @@ class DingyInstructorAvailability(models.Model):
                               on_delete=models.deletion.CASCADE,
                               null=True)
 
+
+class AssistantInstructorAvailability(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.deletion.CASCADE,
+                               null=False)
+    assistant = models.ForeignKey(AssistantInstructor,
+                                   on_delete=models.deletion.CASCADE,
+                                   null=False)
+    assigned = models.BooleanField()
+    stage = models.ForeignKey(Stage,
+                              on_delete=models.deletion.CASCADE,
+                              null=True)
+
     def __str__(self):
-        return self.course.name + " - " + self.instructor.name
+        return self.course.name + " - " + self.assistant.name
