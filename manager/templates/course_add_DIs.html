@@ -13,8 +13,8 @@
                 <input name="course" type="number" value={{ course.id }} required hidden>
                 <fieldset>
                     <legend>Select all available DIs:</legend>
-                    {% for DI in DIs %}
-                        <input type="checkbox" name="instructors[]" value={{ DI.id }}>{{ DI.name }}<br>
+                    {% for staff in staffs %}
+                        <input type="checkbox" name="instructors[]" value={{ staff.id }}>{{ staff.name }}<br>
                     {% endfor %}
                 </fieldset>
                 <br>

@@ -146,7 +146,7 @@ def availability_add_view(request, pk, staff_type, staff_availability):
             template = loader.get_template("course_add_DIs.html")
             context = {
                 'title': "Add DIs",
-                'DIs': staffs,
+                'staffs': staffs,
                 'course': course[0],
             }
             return HttpResponse(template.render(context, request))
