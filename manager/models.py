@@ -55,19 +55,7 @@ class Stage(models.Model):
 class DingyInstructorAvailability(models.Model):
     course = models.ForeignKey(Course, on_delete=models.deletion.CASCADE,
                                null=False)
-    instructor = models.ForeignKey(DingyInstructor,
-                                   on_delete=models.deletion.CASCADE,
-                                   null=False)
-    assigned = models.BooleanField()
-    stage = models.ForeignKey(Stage,
-                              on_delete=models.deletion.CASCADE,
-                              null=True)
-
-
-class AssistantInstructorAvailability(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.deletion.CASCADE,
-                               null=False)
-    assistant = models.ForeignKey(AssistantInstructor,
+    staff = models.ForeignKey(DingyInstructor,
                                    on_delete=models.deletion.CASCADE,
                                    null=False)
     assigned = models.BooleanField()
@@ -76,4 +64,19 @@ class AssistantInstructorAvailability(models.Model):
                               null=True)
 
     def __str__(self):
-        return self.course.name + " - " + self.assistant.name
+        return self.course.name + " - " + self.staff.name
+
+
+class AssistantInstructorAvailability(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.deletion.CASCADE,
+                               null=False)
+    staff = models.ForeignKey(AssistantInstructor,
+                                   on_delete=models.deletion.CASCADE,
+                                   null=False)
+    assigned = models.BooleanField()
+    stage = models.ForeignKey(Stage,
+                              on_delete=models.deletion.CASCADE,
+                              null=True)
+
+    def __str__(self):
+        return self.course.name + " - " + self.staff.name

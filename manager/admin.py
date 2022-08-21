@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from manager.models import DingyInstructor, AssistantInstructor, Helper, \
-    Course, DingyInstructorAvailability, Stage
+    Course, DingyInstructorAvailability, Stage, AssistantInstructorAvailability
 
 
 class DingyInstructorAdmin(admin.ModelAdmin):
@@ -26,7 +26,12 @@ class CourseAdmin(admin.ModelAdmin):
 
 class DingyInstructorAvailabilityAdmin(admin.ModelAdmin):
     model = DingyInstructorAvailability
-    list_display = ["id", "course", "instructor", "assigned"]
+    list_display = ["id", "course", "staff", "assigned"]
+
+
+class AssistantInstructorAvailabilityAdmin(admin.ModelAdmin):
+    model = DingyInstructorAvailability
+    list_display = ["id", "course", "staff", "assigned"]
 
 
 class StageAdmin(admin.ModelAdmin):
@@ -40,4 +45,6 @@ admin.site.register(Helper, HelperAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(DingyInstructorAvailability,
                     DingyInstructorAvailabilityAdmin)
+admin.site.register(AssistantInstructorAvailability,
+                    AssistantInstructorAvailabilityAdmin)
 admin.site.register(Stage, StageAdmin)

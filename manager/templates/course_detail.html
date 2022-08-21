@@ -24,7 +24,7 @@
                 <div class="row" style="width: 100%;">
                     <div class="card m-3 shadow-sm" style="width: 33.33%;padding: 0;">
                         <div class="card-header sticky-top d-flex justify-content-between align-items-center mb-3 bg-light">
-                            <h5 class="card-title">Instructors: </h5>
+                            <h5 class="card-title">DIs: </h5>
                             <a class="btn btn-info btn-sm" href="{% url 'course-availability-add-DIs' pk=course.id%}">
                                 <i class="fa fa-plus"></i>
                             </a>
@@ -33,12 +33,37 @@
                             <table>
                                 {% for DI in DI_availability %}
                                     <tr>
-                                        <td>{{ DI.instructor.name }}</td>
+                                        <td>{{ DI.staff.name }}</td>
                                         <td>
                                             <form id="available-DI-delete-form-{{ DI.id }}" method="post" action="{% url 'course-availability-remove-DI' pk=DI.id course_id=course.id%}">
                                                 {% csrf_token %}
                                             </form>
                                             <a class="btn btn-danger btn-sm m-1" onclick="document.getElementById('available-DI-delete-form-{{ DI.id }}').submit();">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card m-3 shadow-sm" style="width: 33.33%;padding: 0;">
+                        <div class="card-header sticky-top d-flex justify-content-between align-items-center mb-3 bg-light">
+                            <h5 class="card-title">AIs: </h5>
+                            <a class="btn btn-info btn-sm" href="{% url 'course-availability-add-DIs' pk=course.id%}">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <table>
+                                {% for AI in AI_availability %}
+                                    <tr>
+                                        <td>{{ AI.staff.name }}</td>
+                                        <td>
+                                            <form id="available-DI-delete-form-{{ AI.id }}" method="post" action="{% url 'course-availability-remove-DI' pk=AI.id course_id=course.id%}">
+                                                {% csrf_token %}
+                                            </form>
+                                            <a class="btn btn-danger btn-sm m-1" onclick="document.getElementById('available-DI-delete-form-{{ AI.id }}').submit();">
                                                 <i class="fa fa-trash"></i>
                                             </a>
                                         </td>
@@ -93,7 +118,7 @@
                                                 </tr>
                                                 {% for instructor in stage.dingyinstructoravailability_set.all %}
                                                     <tr>
-                                                        <td>{{ instructor.instructor.name }}</td>
+                                                        <td>{{ instructor.staff.name }}</td>
                                                         <td>
                                                             <a class="btn btn-info btn-sm" href="{% url 'stage-return-DI' course_id=course.id stage_id=stage.id pk=instructor.id%}">
                                                                 <i class="fa-solid fa-arrow-turn-up"></i>

@@ -70,6 +70,10 @@ urlpatterns = [
          DIAvailabilityDeleteView.as_view(),
          name="course-availability-remove-DI"),
 
+    path('course/<int:pk>/availability/AIs/add',
+         views.course_availability_add_AIs,
+         name="course-availability-add-AIs"),
+
     path('course/<int:course_id>/stage/add',
          StageCreateView.as_view(), name='stage-create'),
     path('course/<int:course_id>/stage/<int:pk>/update',

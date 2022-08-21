@@ -7,7 +7,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from manager.forms import DingyInstructorForm, AssistantInstructorForm, \
     HelperForm, CourseForm
 from manager.models import DingyInstructor, AssistantInstructor, Helper, \
-    Course, DingyInstructorAvailability, Stage
+    Course, DingyInstructorAvailability, Stage, AssistantInstructorAvailability
 
 
 def home(request):
@@ -140,8 +140,8 @@ def availability_add_view(request, pk, staff_type, staff_availability):
             availabilities = staff_availability.objects.filter(
                 course=pk)
             for availability in availabilities:
-                print(availability.instructor.id)
-                staffs = staffs.exclude(id=availability.instructor.id)
+                print(availability.staff.id)
+                staffs = staffs.exclude(id=availability.staff.id)
 
             template = loader.get_template("course_add_DIs.html")
             context = {
@@ -159,22 +159,27 @@ def availability_add_view(request, pk, staff_type, staff_availability):
                 # ensure this combination doesnt already exist!
                 exiting_comb = staff_availability.objects \
                     .filter(course=course,
-                            instructor=staff)
+                            staff=staff)
                 if len(exiting_comb) != 0:
                     continue
 
                 # Add this availability record
                 staff_availability.objects \
                     .create(course=course,
-                            instructor=staff,
+                            staff=staff,
                             assigned=False)
-            return HttpResponseRedirect(reverse('course-detail',
+            return HttpResponseRedirect(reverse('course-availability-add-AIs',
                                                 args=[course.id]))
 
 
 def course_availability_add_DIs(request, pk):
     return availability_add_view(request, pk, DingyInstructor,
                                  DingyInstructorAvailability)
+
+
+def course_availability_add_AIs(request, pk):
+    return availability_add_view(request, pk, AssistantInstructor,
+                                 AssistantInstructorAvailability)
 
 
 class DIAvailabilityDeleteView(DeleteView):
@@ -195,6 +200,8 @@ def course_detail_view(request, pk):
     context = {
         'title': "View Course",
         'DI_availability': DingyInstructorAvailability.objects.filter(
+            course=pk, assigned=False),
+        'AI_availability': AssistantInstructorAvailability.objects.filter(
             course=pk, assigned=False),
         'course': course,
         'stages': stages

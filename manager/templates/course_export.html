@@ -13,7 +13,7 @@
             <h3 style="margin: 2px;">Instructors: </h3>
             <ul style="margin-top: 2px">
                 {% for DI in stage.dingyinstructoravailability_set.all %}
-                    <li>{{ DI.instructor.name }}</li>
+                    <li>{{ DI.staff.name }}</li>
                 {% endfor %}
             </ul>
         </div>
