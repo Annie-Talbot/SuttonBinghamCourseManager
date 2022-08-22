@@ -11,25 +11,6 @@ from manager.models import DingyInstructor, AssistantInstructor, Helper, \
     AssistantInstructorAvailability, HelperAvailability
 
 
-staff = {
-    'DI': {
-        'name': 'DI',
-        'type': DingyInstructor,
-        'availability': DingyInstructorAvailability
-    },
-    'AI': {
-        'name': 'AI',
-        'type': AssistantInstructor,
-        'availability': AssistantInstructorAvailability
-    },
-    'Helper': {
-        'name': 'helper',
-        'type': Helper,
-        'availability': HelperAvailability
-    }
-}
-
-
 def home(request):
     if not request.user.is_authenticated:
         return redirect('login')
@@ -304,13 +285,13 @@ class StageDeleteView(DeleteView):
 
 
 def stage_add_staffs(request, course_id, stage_id,
-                     staff):
+                     staff_type, staff_availability):
     if not request.user.is_authenticated:
         return redirect('login')
     else:
         if request.method == "GET":
             course = Course.objects.get(id=course_id)
-            available_staffs = staff['availability'].objects \
+            available_staffs = staff_availability.objects \
                 .exclude(assigned=True) \
                 .filter(course=course)
 
@@ -325,9 +306,9 @@ def stage_add_staffs(request, course_id, stage_id,
             raw_staffs = request.POST.getlist('staff[]')
             course = Course.objects.get(id=course_id)
             for staff_id in raw_staffs:
-                staff = staff['type'].objects.get(id=staff_id)
+                staff = staff_type.objects.get(id=staff_id)
                 # ensure this combination doesnt already exist!
-                staff['availability'].objects \
+                staff_availability.objects \
                     .filter(course=course,
                             staff=staff) \
                     .update(assigned=True, stage=stage_id)
@@ -337,22 +318,25 @@ def stage_add_staffs(request, course_id, stage_id,
 
 
 def stage_add_DIs(request, course_id, stage_id):
-    return stage_add_staffs(request, course_id, stage_id, staff['DI'])
+    return stage_add_staffs(request, course_id, stage_id, DingyInstructor,
+                            DingyInstructorAvailability)
 
 
 def stage_add_AIs(request, course_id, stage_id):
-    return stage_add_staffs(request, course_id, stage_id, staff['AI'])
+    return stage_add_staffs(request, course_id, stage_id, AssistantInstructor,
+                            AssistantInstructorAvailability)
 
 
 def stage_add_helpers(request, course_id, stage_id):
-    return stage_add_staffs(request, course_id, stage_id, staff['Helper'])
+    return stage_add_staffs(request, course_id, stage_id, Helper,
+                            HelperAvailability)
 
 
-def stage_return_staff(request, course_id, stage_id, pk, staff):
+def stage_return_staff(request, course_id, stage_id, pk, staff_availability):
     if not request.user.is_authenticated:
         return redirect('login')
     else:
-        staff['availability'].objects.filter(id=pk).update(
+        staff_availability.objects.filter(id=pk).update(
             assigned=False,
             stage=None)
         return HttpResponseRedirect(reverse("course-detail", args=[course_id]))
@@ -360,17 +344,17 @@ def stage_return_staff(request, course_id, stage_id, pk, staff):
 
 def stage_return_DI(request, course_id, stage_id, pk):
     return stage_return_staff(request, course_id, stage_id, pk,
-                              staff['DI'])
+                              DingyInstructorAvailability)
 
 
 def stage_return_AI(request, course_id, stage_id, pk):
     return stage_return_staff(request, course_id, stage_id, pk,
-                              staff['AI'])
+                              AssistantInstructorAvailability)
 
 
 def stage_return_helper(request, course_id, stage_id, pk):
     return stage_return_staff(request, course_id, stage_id, pk,
-                              staff['Helper'])
+                              HelperAvailability)
 
 
 def page_not_found_view(request, exception):
