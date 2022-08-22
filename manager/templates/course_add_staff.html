@@ -14,7 +14,7 @@
                 <fieldset>
                     <legend>Select all available DIs:</legend>
                     {% for staff in staffs %}
-                        <input type="checkbox" name="instructors[]" value={{ staff.id }}>{{ staff.name }}<br>
+                        <input type="checkbox" name="staff[]" value={{ staff.id }}>{{ staff.name }}<br>
                     {% endfor %}
                 </fieldset>
                 <br>

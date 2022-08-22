@@ -14,7 +14,7 @@
                 <fieldset>
                     <legend>Select all available DIs:</legend>
                     {% for available_staff in available_staffs %}
-                        <input type="checkbox" name="instructors[]" value={{ available_staff.staff.id }}>{{ available_staff.staff.name }}
+                        <input type="checkbox" name="staff[]" value={{ available_staff.staff.id }}>{{ available_staff.staff.name }}
                         <br>
                     {% endfor %}
                 </fieldset>

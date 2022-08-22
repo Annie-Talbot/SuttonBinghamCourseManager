@@ -7,7 +7,27 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from manager.forms import DingyInstructorForm, AssistantInstructorForm, \
     HelperForm, CourseForm
 from manager.models import DingyInstructor, AssistantInstructor, Helper, \
-    Course, DingyInstructorAvailability, Stage, AssistantInstructorAvailability
+    Course, DingyInstructorAvailability, Stage, \
+    AssistantInstructorAvailability, HelperAvailability
+
+
+staff = {
+    'DI': {
+        'name': 'DI',
+        'type': DingyInstructor,
+        'availability': DingyInstructorAvailability
+    },
+    'AI': {
+        'name': 'AI',
+        'type': AssistantInstructor,
+        'availability': AssistantInstructorAvailability
+    },
+    'Helper': {
+        'name': 'helper',
+        'type': Helper,
+        'availability': HelperAvailability
+    }
+}
 
 
 def home(request):
@@ -128,7 +148,8 @@ def course_export_view(request, pk):
     return HttpResponse(template.render(context, request))
 
 
-def availability_add_view(request, pk, staff_type, staff_availability):
+def availability_add_view(request, pk, staff_type, staff_availability,
+                          next_url):
     if not request.user.is_authenticated:
         return redirect('login')
     else:
@@ -143,7 +164,7 @@ def availability_add_view(request, pk, staff_type, staff_availability):
                 print(availability.staff.id)
                 staffs = staffs.exclude(id=availability.staff.id)
 
-            template = loader.get_template("course_add_DIs.html")
+            template = loader.get_template("course_add_staff.html")
             context = {
                 'title': "Add DIs",
                 'staffs': staffs,
@@ -151,7 +172,7 @@ def availability_add_view(request, pk, staff_type, staff_availability):
             }
             return HttpResponse(template.render(context, request))
         else:
-            raw_staff = request.POST.getlist('instructors[]')
+            raw_staff = request.POST.getlist('staff[]')
             course = Course.objects.filter(id=pk)[0]
             for staff_id in raw_staff:
                 staff = staff_type.objects.filter(id=staff_id)[
@@ -168,22 +189,45 @@ def availability_add_view(request, pk, staff_type, staff_availability):
                     .create(course=course,
                             staff=staff,
                             assigned=False)
-            return HttpResponseRedirect(reverse('course-availability-add-AIs',
+            return HttpResponseRedirect(reverse(next_url,
                                                 args=[course.id]))
 
 
 def course_availability_add_DIs(request, pk):
     return availability_add_view(request, pk, DingyInstructor,
-                                 DingyInstructorAvailability)
+                                 DingyInstructorAvailability,
+                                 'course-availability-add-AIs')
 
 
 def course_availability_add_AIs(request, pk):
     return availability_add_view(request, pk, AssistantInstructor,
-                                 AssistantInstructorAvailability)
+                                 AssistantInstructorAvailability,
+                                 'course-availability-add-helpers')
+
+
+def course_availability_add_helpers(request, pk):
+    return availability_add_view(request, pk, Helper,
+                                 HelperAvailability, 'course-detail')
 
 
 class DIAvailabilityDeleteView(DeleteView):
     model = DingyInstructorAvailability
+    pk_url_kwarg = 'pk'
+
+    def get_success_url(self):
+        return reverse('course-detail', args=[self.kwargs['course_id']])
+
+
+class AIAvailabilityDeleteView(DeleteView):
+    model = AssistantInstructorAvailability
+    pk_url_kwarg = 'pk'
+
+    def get_success_url(self):
+        return reverse('course-detail', args=[self.kwargs['course_id']])
+
+
+class HelperAvailabilityDeleteView(DeleteView):
+    model = HelperAvailability
     pk_url_kwarg = 'pk'
 
     def get_success_url(self):
@@ -202,6 +246,8 @@ def course_detail_view(request, pk):
         'DI_availability': DingyInstructorAvailability.objects.filter(
             course=pk, assigned=False),
         'AI_availability': AssistantInstructorAvailability.objects.filter(
+            course=pk, assigned=False),
+        'helper_availability': HelperAvailability.objects.filter(
             course=pk, assigned=False),
         'course': course,
         'stages': stages
@@ -257,46 +303,74 @@ class StageDeleteView(DeleteView):
         return super().form_valid(form)
 
 
-def stage_add_DIs(request, course_id, stage_id):
+def stage_add_staffs(request, course_id, stage_id,
+                     staff):
     if not request.user.is_authenticated:
         return redirect('login')
     else:
         if request.method == "GET":
             course = Course.objects.get(id=course_id)
-            available_DIs = DingyInstructorAvailability.objects \
+            available_staffs = staff['availability'].objects \
                 .exclude(assigned=True) \
                 .filter(course=course)
 
-            template = loader.get_template("stage_add_DIs.html")
+            template = loader.get_template("stage_add_staff.html")
             context = {
-                'title': "Add DIs",
-                'DIs': available_DIs,
+                'title': "Add staff",
+                'available_staffs': available_staffs,
                 'course': course,
             }
             return HttpResponse(template.render(context, request))
         else:
-            raw_instructors = request.POST.getlist('instructors[]')
+            raw_staffs = request.POST.getlist('staff[]')
             course = Course.objects.get(id=course_id)
-            for instructor_id in raw_instructors:
-                instructor = DingyInstructor.objects.get(id=instructor_id)
+            for staff_id in raw_staffs:
+                staff = staff['type'].objects.get(id=staff_id)
                 # ensure this combination doesnt already exist!
-                DingyInstructorAvailability.objects \
+                staff['availability'].objects \
                     .filter(course=course,
-                            instructor=instructor) \
+                            staff=staff) \
                     .update(assigned=True, stage=stage_id)
 
             return HttpResponseRedirect(reverse('course-detail',
                                                 args=[course.id]))
 
 
-def stage_return_DI(request, course_id, stage_id, pk):
+def stage_add_DIs(request, course_id, stage_id):
+    return stage_add_staffs(request, course_id, stage_id, staff['DI'])
+
+
+def stage_add_AIs(request, course_id, stage_id):
+    return stage_add_staffs(request, course_id, stage_id, staff['AI'])
+
+
+def stage_add_helpers(request, course_id, stage_id):
+    return stage_add_staffs(request, course_id, stage_id, staff['Helper'])
+
+
+def stage_return_staff(request, course_id, stage_id, pk, staff):
     if not request.user.is_authenticated:
         return redirect('login')
     else:
-        DingyInstructorAvailability.objects.filter(id=pk).update(
+        staff['availability'].objects.filter(id=pk).update(
             assigned=False,
             stage=None)
         return HttpResponseRedirect(reverse("course-detail", args=[course_id]))
+
+
+def stage_return_DI(request, course_id, stage_id, pk):
+    return stage_return_staff(request, course_id, stage_id, pk,
+                              staff['DI'])
+
+
+def stage_return_AI(request, course_id, stage_id, pk):
+    return stage_return_staff(request, course_id, stage_id, pk,
+                              staff['AI'])
+
+
+def stage_return_helper(request, course_id, stage_id, pk):
+    return stage_return_staff(request, course_id, stage_id, pk,
+                              staff['Helper'])
 
 
 def page_not_found_view(request, exception):

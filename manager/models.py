@@ -56,12 +56,12 @@ class DingyInstructorAvailability(models.Model):
     course = models.ForeignKey(Course, on_delete=models.deletion.CASCADE,
                                null=False)
     staff = models.ForeignKey(DingyInstructor,
-                                   on_delete=models.deletion.CASCADE,
-                                   null=False)
+                              on_delete=models.deletion.CASCADE,
+                              null=False)
     assigned = models.BooleanField()
     stage = models.ForeignKey(Stage,
                               on_delete=models.deletion.CASCADE,
-                              null=True)
+                              blank=True, null=True)
 
     def __str__(self):
         return self.course.name + " - " + self.staff.name
@@ -71,12 +71,27 @@ class AssistantInstructorAvailability(models.Model):
     course = models.ForeignKey(Course, on_delete=models.deletion.CASCADE,
                                null=False)
     staff = models.ForeignKey(AssistantInstructor,
-                                   on_delete=models.deletion.CASCADE,
-                                   null=False)
+                              on_delete=models.deletion.CASCADE,
+                              null=False)
     assigned = models.BooleanField()
     stage = models.ForeignKey(Stage,
                               on_delete=models.deletion.CASCADE,
-                              null=True)
+                              blank=True, null=True)
+
+    def __str__(self):
+        return self.course.name + " - " + self.staff.name
+
+
+class HelperAvailability(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.deletion.CASCADE,
+                               null=False)
+    staff = models.ForeignKey(Helper,
+                              on_delete=models.deletion.CASCADE,
+                              null=False)
+    assigned = models.BooleanField()
+    stage = models.ForeignKey(Stage,
+                              on_delete=models.deletion.CASCADE,
+                              blank=True, null=True)
 
     def __str__(self):
         return self.course.name + " - " + self.staff.name

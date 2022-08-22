@@ -23,14 +23,17 @@ from manager.views import DingyInstructorCreateView, DingyInstructorDeleteView, 
     AssistantInstructorDeleteView, AssistantInstructorCreateView, \
     HelperCreateView, HelperDeleteView, HelperUpdateView, CourseCreateView, \
     CourseDeleteView, CourseUpdateView, DIAvailabilityDeleteView, \
-    StageCreateView, StageUpdateView, StageDeleteView
+    StageCreateView, StageUpdateView, StageDeleteView, \
+    AIAvailabilityDeleteView, HelperAvailabilityDeleteView
 
 urlpatterns = [
+    # General
     path('', RedirectView.as_view(pattern_name='home', permanent=True)),
     path('admin/', admin.site.urls),
     path("accounts/", include("django.contrib.auth.urls")),
     path('home/', views.home, name="home"),
 
+    # Dingy Instructor Management
     path('dingy-instructor/add', DingyInstructorCreateView.as_view(),
          name="DI-add"),
     path('dingy-instructor/delete/<int:pk>',
@@ -38,6 +41,7 @@ urlpatterns = [
     path('dingy-instructor/update/<int:pk>',
          DingyInstructorUpdateView.as_view(), name="DI-update"),
 
+    # Assistant Instructor Management
     path('assistant-instructor/add', AssistantInstructorCreateView.as_view(),
          name="AI-add"),
     path('assistant-instructor/delete/<int:pk>',
@@ -45,6 +49,7 @@ urlpatterns = [
     path('assistant-instructor/update/<int:pk>',
          AssistantInstructorUpdateView.as_view(), name="AI-update"),
 
+    # Helper Management
     path('helper/add',
          HelperCreateView.as_view(), name="helper-add"),
     path('helper/delete/<int:pk>',
@@ -52,6 +57,7 @@ urlpatterns = [
     path('helper/update/<int:pk>',
          HelperUpdateView.as_view(), name="helper-update"),
 
+    # Course General Management
     path('course/add',
          CourseCreateView.as_view(), name="course-add"),
     path('course/<int:pk>/update',
@@ -63,6 +69,7 @@ urlpatterns = [
     path('course/<int:pk>/export',
          views.course_export_view, name="course-export"),
 
+    # Course DI Availability Management
     path('course/<int:pk>/availability/DIs/add',
          views.course_availability_add_DIs,
          name="course-availability-add-DIs"),
@@ -70,16 +77,31 @@ urlpatterns = [
          DIAvailabilityDeleteView.as_view(),
          name="course-availability-remove-DI"),
 
+    # Course AI Availability Management
     path('course/<int:pk>/availability/AIs/add',
          views.course_availability_add_AIs,
          name="course-availability-add-AIs"),
+    path('course/<int:course_id>/availability/AIs/remove/<int:pk>',
+         AIAvailabilityDeleteView.as_view(),
+         name="course-availability-remove-AI"),
 
+    # Course Helper Availability Management
+    path('course/<int:pk>/availability/helpers/add',
+         views.course_availability_add_helpers,
+         name="course-availability-add-helpers"),
+    path('course/<int:course_id>/availability/helpers/remove/<int:pk>',
+         HelperAvailabilityDeleteView.as_view(),
+         name="course-availability-remove-helper"),
+
+    # Stage General Management
     path('course/<int:course_id>/stage/add',
          StageCreateView.as_view(), name='stage-create'),
     path('course/<int:course_id>/stage/<int:pk>/update',
          StageUpdateView.as_view(), name='stage-update'),
     path('course/<int:course_id>/stage/<int:pk>/delete',
          StageDeleteView.as_view(), name='stage-delete'),
+
+    # Stage DI Management
     path('course/<int:course_id>/stage/<int:stage_id>/DIs/add',
          views.stage_add_DIs,
          name='stage-add-DIs'),
@@ -87,6 +109,21 @@ urlpatterns = [
          views.stage_return_DI,
          name='stage-return-DI'),
 
+    # Stage AI Management
+    path('course/<int:course_id>/stage/<int:stage_id>/AIs/add',
+         views.stage_add_AIs,
+         name='stage-add-AIs'),
+    path('course/<int:course_id>/stage/<int:stage_id>/AIs/<int:pk>/return',
+         views.stage_return_AI,
+         name='stage-return-AI'),
+
+    # Stage Helper Management
+    path('course/<int:course_id>/stage/<int:stage_id>/helpers/add',
+         views.stage_add_helpers,
+         name='stage-add-helpers'),
+    path('course/<int:course_id>/stage/<int:stage_id>/helpers/<int:pk>/return',
+         views.stage_return_helper,
+         name='stage-return-helper'),
 ]
 
 handler404 = "manager.views.page_not_found_view"

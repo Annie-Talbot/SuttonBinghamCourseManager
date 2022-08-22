@@ -21,8 +21,8 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="row" style="width: 100%;">
-                    <div class="card m-3 shadow-sm" style="width: 33.33%;padding: 0;">
+                <div class="row" style="width: 100%; margin: 0;">
+                    <div class="card m-3 shadow-sm" style="width: 30.5%;padding: 0;">
                         <div class="card-header sticky-top d-flex justify-content-between align-items-center mb-3 bg-light">
                             <h5 class="card-title">DIs: </h5>
                             <a class="btn btn-info btn-sm" href="{% url 'course-availability-add-DIs' pk=course.id%}">
@@ -47,10 +47,10 @@
                             </table>
                         </div>
                     </div>
-                    <div class="card m-3 shadow-sm" style="width: 33.33%;padding: 0;">
+                    <div class="card m-3 shadow-sm" style="width: 30.5%;padding: 0;">
                         <div class="card-header sticky-top d-flex justify-content-between align-items-center mb-3 bg-light">
                             <h5 class="card-title">AIs: </h5>
-                            <a class="btn btn-info btn-sm" href="{% url 'course-availability-add-DIs' pk=course.id%}">
+                            <a class="btn btn-info btn-sm" href="{% url 'course-availability-add-AIs' pk=course.id%}">
                                 <i class="fa fa-plus"></i>
                             </a>
                         </div>
@@ -60,10 +60,35 @@
                                     <tr>
                                         <td>{{ AI.staff.name }}</td>
                                         <td>
-                                            <form id="available-DI-delete-form-{{ AI.id }}" method="post" action="{% url 'course-availability-remove-DI' pk=AI.id course_id=course.id%}">
+                                            <form id="available-AI-delete-form-{{ AI.id }}" method="post" action="{% url 'course-availability-remove-AI' pk=AI.id course_id=course.id%}">
                                                 {% csrf_token %}
                                             </form>
-                                            <a class="btn btn-danger btn-sm m-1" onclick="document.getElementById('available-DI-delete-form-{{ AI.id }}').submit();">
+                                            <a class="btn btn-danger btn-sm m-1" onclick="document.getElementById('available-AI-delete-form-{{ AI.id }}').submit();">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card m-3 shadow-sm" style="width: 30.5%;padding: 0;">
+                        <div class="card-header sticky-top d-flex justify-content-between align-items-center mb-3 bg-light">
+                            <h5 class="card-title">Helpers: </h5>
+                            <a class="btn btn-info btn-sm" href="{% url 'course-availability-add-helpers' pk=course.id%}">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <table>
+                                {% for helper in helper_availability %}
+                                    <tr>
+                                        <td>{{ helper.staff.name }}</td>
+                                        <td>
+                                            <form id="available-helper-delete-form-{{ helper.id }}" method="post" action="{% url 'course-availability-remove-helper' pk=helper.id course_id=course.id%}">
+                                                {% csrf_token %}
+                                            </form>
+                                            <a class="btn btn-danger btn-sm m-1" onclick="document.getElementById('available-helper-delete-form-{{ helper.id }}').submit();">
                                                 <i class="fa fa-trash"></i>
                                             </a>
                                         </td>
@@ -121,6 +146,46 @@
                                                         <td>{{ instructor.staff.name }}</td>
                                                         <td>
                                                             <a class="btn btn-info btn-sm" href="{% url 'stage-return-DI' course_id=course.id stage_id=stage.id pk=instructor.id%}">
+                                                                <i class="fa-solid fa-arrow-turn-up"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </table>
+                                            <table>
+                                                <tr>
+                                                    <th>Assistants:</th>
+                                                    <th>
+                                                        <a class="btn btn-info btn-sm" href="{% url 'stage-add-AIs' course_id=course.id stage_id=stage.id%}">
+                                                            <i class="fa fa-plus"></i>
+                                                        </a>
+                                                    </th>
+                                                </tr>
+                                                {% for assistant in stage.assistantinstructoravailability_set.all %}
+                                                    <tr>
+                                                        <td>{{ assistant.staff.name }}</td>
+                                                        <td>
+                                                            <a class="btn btn-info btn-sm" href="{% url 'stage-return-AI' course_id=course.id stage_id=stage.id pk=assistant.id%}">
+                                                                <i class="fa-solid fa-arrow-turn-up"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </table>
+                                            <table>
+                                                <tr>
+                                                    <th>Helpers:</th>
+                                                    <th>
+                                                        <a class="btn btn-info btn-sm" href="{% url 'stage-add-helpers' course_id=course.id stage_id=stage.id%}">
+                                                            <i class="fa fa-plus"></i>
+                                                        </a>
+                                                    </th>
+                                                </tr>
+                                                {% for helper in stage.helperavailability_set.all %}
+                                                    <tr>
+                                                        <td>{{ helper.staff.name }}</td>
+                                                        <td>
+                                                            <a class="btn btn-info btn-sm" href="{% url 'stage-return-helper' course_id=course.id stage_id=stage.id pk=helper.id%}">
                                                                 <i class="fa-solid fa-arrow-turn-up"></i>
                                                             </a>
                                                         </td>
